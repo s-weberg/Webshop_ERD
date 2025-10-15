@@ -21,8 +21,8 @@ model Product {
   price Float
   stock Int
   category_id Int?
-  category   Category? @relation(fields: [category_id], references: [id])
-  orderItems OrderItem[]
+  category    Category? @relation(fields: [category_id], references: [id])
+  orderItems  OrderItem[]
 }
 
 model Category {

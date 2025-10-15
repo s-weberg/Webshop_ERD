@@ -8,10 +8,45 @@ const PORT = 3000;
 
 //Create a new product using req.body
 app.post("/products", async (req, res) => {
+  try {
+    const newProduct = await prisma.product.create({ data: req.body });
+    res.json(newProduct);
+    } catch (error) { res.status(500).send(error instanceof Error ? error.message : 'Unknown error'); }
+});
+
+
+app.get("/products", async (req, res) => {
+  try {
+    const { category, minPrice, maxPrice } = req.query;
+    const products = await prisma.product.findMany({
+        where: {
+            category: category ? { name: String(category) } : undefined,
+            price: {
+                gte: minPrice ? Number(minPrice) : undefined,
+                lte: maxPrice ? Number(maxPrice) : undefined,
+            },
+        },
+        include: { category: true },
+    });
+    res.json(products);
+    } catch (error) { res.status(500).send(error instanceof Error ? error.message : 'Unknown error'); }
+});
+
+//Uppdate product by id
+app.patch("/products/:id", async (req, res) => {
     try {
-        const newProduct = await prisma.product.create({ data: req.body });
-        res.json(newProduct);
-    } catch (error) {
-        res.status(500).send({ error: error instanceof Error ? error.message : "Failed to create product" });
-    }
+        const updatedProduct = await prisma.product.update({
+            where: { id: Number(req.params.id) },
+            data: req.body,
+        });
+        res.json(updatedProduct);
+    } catch (error) { res.status(500).send(error instanceof Error ? error.message : 'Unknown error'); }
+});
+
+
+
+
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
