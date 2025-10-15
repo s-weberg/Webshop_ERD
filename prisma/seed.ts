@@ -14,3 +14,15 @@ async function seed() {
 
     const order1 = await prisma.order.create({data: { customer_id: Doris.id }});
     const order2 = await prisma.order.create({data: { customer_id: Disa.id }});
+
+    console.log("Seeding finished.");
+}
+
+seed()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });   
