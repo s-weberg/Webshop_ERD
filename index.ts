@@ -15,6 +15,7 @@ app.post("/products", async (req, res) => {
 });
 
 
+//Filter products by category and price
 app.get("/products", async (req, res) => {
   try {
     const { category, minPrice, maxPrice } = req.query;
@@ -40,6 +41,16 @@ app.patch("/products/:id", async (req, res) => {
             data: req.body,
         });
         res.json(updatedProduct);
+    } catch (error) { res.status(500).send(error instanceof Error ? error.message : 'Unknown error'); }
+});
+
+//Delete product by id
+app.delete("/products/:id", async (req, res) => {
+    try {
+        const deletedProduct = await prisma.product.delete({
+            where: { id: Number(req.params.id) },
+        });
+        res.json(deletedProduct);
     } catch (error) { res.status(500).send(error instanceof Error ? error.message : 'Unknown error'); }
 });
 
